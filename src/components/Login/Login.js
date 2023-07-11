@@ -17,7 +17,7 @@ const Login = () => {
       const loginResponse = await loginUser(user);
 
       // Handle successful login response
-      navigate('/home/index'); // Redirect to the home page after successful login
+      navigate('/home/index', { replace: true }); // Navigate to the Home page and replace the current URL
       console.log(loginResponse);
       setError(null)
     } catch (error) {
