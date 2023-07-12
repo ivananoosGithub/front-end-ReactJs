@@ -1,28 +1,31 @@
-import React, { useState } from "react";
-import "../../App.css";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import { loginUser } from "../Login/apiRoute";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(null); 
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    // Check if the user is already logged in
+    if (localStorage.getItem("isLoggedIn") === "true") {
+      navigate('/home/index', { replace: true });
+    }
+  }, [navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       const user = { username, password };
       const loginResponse = await loginUser(user);
-
-      // Handle successful login response
-      navigate('/home/index', { replace: true }); // Navigate to the Home page and replace the current URL
+      localStorage.setItem("isLoggedIn", "true"); 
+      navigate('/home/index', { replace: true });
       console.log(loginResponse);
-      setError(null)
+      setError(null);
     } catch (error) {
-      // Handle error response
-      setError("Invalid username or password."); 
+      setError("Invalid username or password.");
       console.error(error);
     }
   };

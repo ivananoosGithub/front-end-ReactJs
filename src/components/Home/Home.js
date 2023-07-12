@@ -1,11 +1,20 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 import "../../App.css";
 
 const Home = () => {
   const [territories, setTerritories] = useState([]);
   const [activeIds, setActiveIds] = useState([]);
+  const navigate = useNavigate(); 
 
   useEffect(() => {
+    
+        // Check if the user is logged in
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+      if (!isLoggedIn) {
+          navigate('/account/login', { replace: true });
+      }
+
     fetch("http://localhost:8082/home/index")
       .then((response) => response.json())
       .then((data) => {
@@ -14,12 +23,17 @@ const Home = () => {
       .catch((error) => {
         console.error("Error:", error);
       });
-  }, []);
+  }, [navigate]);
 
   const handleCaretClick = (id) => {
     setActiveIds((ids) =>
       ids.includes(id) ? ids.filter((i) => i !== id) : [...ids, id]
     );
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('isLoggedIn');
+    navigate('/account/login');
   };
 
   const renderTerritories = (territories) => (
@@ -47,6 +61,7 @@ const Home = () => {
       <h2>Territories</h2>
       <p>Here are the list of territories</p>
       {renderTerritories(territories)}
+      <button onClick={handleLogout}>Logout</button>
     </div>
   );
 };
